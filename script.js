@@ -169,7 +169,7 @@ function renderKidPaintStyle(srcCanvas, outCanvas) {
     outCtx.globalAlpha = 0.5;
     const seedA = Math.random() * 1000;
     const seedB = Math.random() * 1000;
-    const amp = 3 + Math.random() * 2.5;
+    const amp = 30 + Math.random() * 2.5;
     const freq = 0.03 + Math.random() * 0.03;
     for (let ty = 0; ty < h; ty += tile) {
       for (let tx = 0; tx < w; tx += tile) {
