@@ -161,20 +161,25 @@ function renderKidPaintStyle(srcCanvas, outCanvas) {
   }
   edgeCtx.putImageData(edgeImg, 0, 0);
 
-  // --- 3. 윤곽선을 여러 겹, 살짝씩 어긋나고 회전된 채로 겹쳐 그려서 손떨림 느낌 연출 ---
+  // --- 3. 윤곽선을 작은 타일 단위로 파형으로 흔들어 진짜 손떨림처럼 삐뚤빼뚤하게 그림 ---
   outCtx.save();
-  outCtx.globalAlpha = 0.55;
-  const passes = 4;
-  for (let i = 0; i < passes; i++) {
-    const dx = (Math.random() - 0.5) * 5;
-    const dy = (Math.random() - 0.5) * 5;
-    const angle = (Math.random() - 0.5) * 0.02;
-    outCtx.save();
-    outCtx.translate(w / 2 + dx, h / 2 + dy);
-    outCtx.rotate(angle);
-    outCtx.translate(-w / 2, -h / 2);
-    outCtx.drawImage(edgeCanvas, 0, 0, w, h);
-    outCtx.restore();
+  const tile = 6;
+  const passes = 3;
+  for (let p = 0; p < passes; p++) {
+    outCtx.globalAlpha = 0.5;
+    const seedA = Math.random() * 1000;
+    const seedB = Math.random() * 1000;
+    const amp = 3 + Math.random() * 2.5;
+    const freq = 0.03 + Math.random() * 0.03;
+    for (let ty = 0; ty < h; ty += tile) {
+      for (let tx = 0; tx < w; tx += tile) {
+        const dx = Math.sin(ty * freq + tx * 0.05 + seedA) * amp;
+        const dy = Math.sin(tx * freq * 1.3 + ty * 0.05 + seedB) * amp;
+        const sw = Math.min(tile, w - tx);
+        const sh = Math.min(tile, h - ty);
+        outCtx.drawImage(edgeCanvas, tx, ty, sw, sh, tx + dx, ty + dy, sw, sh);
+      }
+    }
   }
   outCtx.restore();
 
